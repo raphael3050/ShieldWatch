@@ -1,6 +1,6 @@
 import express from 'express';
 var router = express.Router();
-
+import analyzeThreat  from './threatAnalyzer.js';
 
 router.get('/', function (req, res) {
     res.json({
@@ -13,11 +13,16 @@ router.get('/', function (req, res) {
 });
 
 
-
-router.post('/', function (req, res) {
-    console.log("[+] POST /tasks");
-    console.log(req.body);
-    // TODO: lancer l'analyse des menaces
+router.post('/', async function (req, res) {
+    console.log("[+] POST /monitor");
+    try {
+        const analysis_result = await analyzeThreat(req.body.data);
+        res.send(analysis_result);
+    } catch (error) {
+        console.error("Erreur lors de l'analyse :", error);
+        res.status(500).send("Erreur lors de l'analyse des données");
+    }
 });
+
 //export this router to use in our index.js
 export default router;

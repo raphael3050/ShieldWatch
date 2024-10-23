@@ -1,20 +1,20 @@
-# Étape 1 : Utiliser une image de base officielle de Node.js (version 18)
+# microserviceA/Dockerfile
+
+# Utiliser une image Node.js officielle
 FROM node:18-alpine
 
-# Étape 2 : Définir le répertoire de travail dans le conteneur
-WORKDIR /app
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /usr/src/app
 
-# Étape 3 : Copier le fichier package.json et package-lock.json dans le répertoire de travail
+# Copier package.json et installer les dépendances
 COPY package*.json ./
-
-# Étape 4 : Installer les dépendances
 RUN npm install
 
-# Étape 5 : Copier le reste du projet dans le répertoire de travail
+# Copier tout le reste du projet dans le conteneur
 COPY . .
 
-# Étape 6 : Exposer le port sur lequel ton microservice fonctionne (3000 par défaut)
+# Exposer le port que l'application utilise
 EXPOSE 3000
 
-# Étape 7 : Définir la commande pour démarrer le microservice
-CMD ["node", "run", "start"]
+# Commande pour démarrer l'application
+CMD ["npm", "start"]
