@@ -1,19 +1,39 @@
-var express = require('express');
-var app = express();
+import express from 'express';
+import { ApolloServer } from 'apollo-server-express';
+import { typeDefs } from './src/db/graphql/schema.js';
+import { resolvers } from './src/db/graphql/resolvers.js';
+import monitor from './src/monitor.js';
+import { connect } from './src/db/mongo.js';
 
-var monitor = require('./src/monitor.js');
+// Connexion à MongoDB
+const MONGO_URI = 'mongodb://localhost:27017/threat_detection';  
+connect(MONGO_URI);
 
+// Initialisation de l'application Express
+const app = express();
 app.use(express.json());
 
+// Création d'une instance d'Apollo Server
+async function startApolloServer(){
+    const apolloServer = new ApolloServer({
+        typeDefs,
+        resolvers,
+    });
+    await apolloServer.start();
+    apolloServer.applyMiddleware({ app , path: "/graphql"} );    
+}
+startApolloServer();
 
-app.get('/', function (req, res, next) {
-    res.send("Welcome to the threat detection service. See /api for details about the API.");
+// Autres routes
+app.get('/', (req, res) => {
+    res.send("Welcome to the threat detection service.");
 });
 
-app.use('/monitor', function (req, res, next) {
-    console.log("A request for todos received at " + Date.now());
-    next();
-});
+// Configuration du middleware pour le monitoring (POST des données)
 app.use('/monitor', monitor);
 
-app.listen(3000);
+// Lancer le serveur
+app.listen(3000, () => {
+    console.log("Server is running on port 3000");
+    console.log(`GraphQL endpoint available at http://localhost:3000/graphql`);
+});
