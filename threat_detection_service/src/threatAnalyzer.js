@@ -1,5 +1,5 @@
 import Rule from './db/model/rule.js';
-
+import sendMessage from './kafka/producer.js';
 /**
  * Vérifie si une chaîne correspond à une règle via son pattern.
  * @param {string} input - La chaîne à analyser.
@@ -11,8 +11,11 @@ const analyzeThreat = async (input) => {
     console.log("Analyzing input :", input);
     for (const rule of rules) {
       const regex = new RegExp(rule.pattern); // Convertit la chaîne en une regex
+      console.log("Analyzing rule :", rule);
       if (regex.test(input)) {
         console.log(`Menace détectée : ${rule.name}`);
+        console.log("[+] Sending message to Kafka consumer...");
+        await sendMessage(JSON.stringify({ threat: rule.name, data: input }));
         return rule; 
       }
     }

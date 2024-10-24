@@ -1,9 +1,9 @@
-// microserviceA/producer.js
+//producer.js
 import { Kafka } from 'kafkajs';
 
 const kafka = new Kafka({
   clientId: 'threat-detection-service',
-  brokers: ['localhost:9092'],  // TODO: adresse Kafka
+  brokers: ['kafka:9092'],
 });
 
 const producer = kafka.producer();
@@ -11,7 +11,7 @@ const producer = kafka.producer();
 const sendMessage = async (message) => {
   await producer.connect();
   
-  // Envoyer le message à un topic
+  // Envoyer le message au topic 'events'
   await producer.send({
     topic: 'events',
     messages: [

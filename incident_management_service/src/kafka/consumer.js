@@ -1,15 +1,22 @@
-// microserviceB/consumer.js
-const { Kafka } = require('kafkajs');
+// consumer.js
+import { Kafka } from 'kafkajs';
 
 const kafka = new Kafka({
   clientId: 'incident-management-service',
-  brokers: ['localhost:9092'],  // TODO: adresse Kafka
+  brokers: [process.env.KAFKA_BROKER],
 });
 
-const consumer = kafka.consumer({ groupId: 'microservice-b-group' });
+const consumer = kafka.consumer({ groupId: 'incident-group' });
 
 const consumeMessages = async () => {
-  await consumer.connect();
+  try {
+    await consumer.connect();
+    console.log('[+] Connected to Kafka');
+  } catch (error) {
+    console.error('Failed to connect to Kafka', error);
+    return;
+  }
+
 
   await consumer.subscribe({ topic: 'events', fromBeginning: true });
 
