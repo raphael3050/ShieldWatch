@@ -8,10 +8,6 @@ const ruleSchema = new mongoose.Schema({
     description: {
         type: String,
     },
-    severity: {
-        type: Number,
-        required: true
-    },
     action: {
         type: String,
         required: true
@@ -25,6 +21,10 @@ const ruleSchema = new mongoose.Schema({
         default: Date.now
     },
     pattern:{
+        type: String,
+        required: true
+    },
+    scope:{
         type: String,
         required: true
     }

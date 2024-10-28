@@ -1,5 +1,6 @@
 // consumer.js
 import { Kafka } from 'kafkajs';
+import manageEvent from '../manager.js';
 
 const kafka = new Kafka({
   clientId: 'incident-management-service',
@@ -25,6 +26,7 @@ const consumeMessages = async () => {
       console.log({
         value: message.value.toString(),
       });
+      await manageEvent(JSON.parse(message.value.toString()));
     },
   });
 };

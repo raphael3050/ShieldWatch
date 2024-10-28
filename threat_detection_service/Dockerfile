@@ -13,7 +13,6 @@ RUN npm install
 # Copier tout le reste du projet dans le conteneur
 COPY . .
 
-# Exposer le port que l'application utilise
 EXPOSE 3001
 
 # Commande pour démarrer l'application

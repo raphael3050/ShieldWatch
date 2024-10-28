@@ -4,23 +4,35 @@ import { typeDefs } from './src/db/graphql/schema.js';
 import { resolvers } from './src/db/graphql/resolvers.js';
 import monitor from './src/monitor.js';
 import { connect } from './src/db/mongo.js';
+import { connectKafka } from './src/kafka/producer.js';
+import cors from 'cors';
 
 // Connexion à MongoDB
-const MONGO_URI = 'mongodb://mongodb:27017/threat-detection';  
-connect(MONGO_URI);
+const MONGO_URI = process.env.MONGODB_URI
+if (!MONGO_URI) {
+    console.error("MONGO_URI is required in the docker compose file");
+    process.exit(1);
+} else {
+    connect(MONGO_URI);
+}
+
+// Connexion à Kafka
+connectKafka();
 
 // Initialisation de l'application Express
 const app = express();
+app.use(cors());
 app.use(express.json());
+app.set('trust proxy', true); // Attention ,c'est seulement pour pouvoir utilier des IP de tests avec X-Forwarded-For
 
-// Création d'une instance d'Apollo Server
-async function startApolloServer(){
+// Création d'une instance d'Apollo Server pour graphQL
+async function startApolloServer() {
     const apolloServer = new ApolloServer({
         typeDefs,
         resolvers,
     });
     await apolloServer.start();
-    apolloServer.applyMiddleware({ app , path: "/graphql"} );    
+    apolloServer.applyMiddleware({ app, path: "/graphql" });
 }
 startApolloServer();
 
@@ -33,7 +45,13 @@ app.get('/', (req, res) => {
 app.use('/monitor', monitor);
 
 // Lancer le serveur
-app.listen(3001, () => {
-    console.log("Server is running on port 3001");
-    console.log(`GraphQL endpoint available at http://localhost:3001/graphql`);
+const PORT = process.env.PORT
+if (!PORT) {
+    console.error("PORT is required in the docker compose file");
+    process.exit(1);
+}
+
+app.listen(PORT, () => {
+    console.log("Server is running on port " + PORT);
+    console.log("GraphQL endpoint: http://localhost:" + PORT + "/graphql");
 });

@@ -3,10 +3,10 @@ export const defaultRules = [
   {
     name: "Block IP",
     description: "Block traffic from a specific IP address",
-    severity: 8,
-    action: "block",
+    action: "BLOCK",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    pattern: "/^192\.168\.1\.2$/"
+    pattern: "^192\\.168\\.1\\.2$",
+    scope: "IP",
   },
 ];

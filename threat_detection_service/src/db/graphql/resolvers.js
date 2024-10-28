@@ -37,6 +37,15 @@ export const resolvers = {
                 throw new ApolloError('Le pattern n\'est pas une expression régulière valide');
             }
         },
+
+        deleteRule: async (_, { id }) => {
+            try {
+                const rule = await Rule.findByIdAndDelete(id);
+                return rule;
+            } catch (error) {
+                throw new ApolloError('Erreur lors de la suppression de la règle');
+            }
+        },
     }
 
 };

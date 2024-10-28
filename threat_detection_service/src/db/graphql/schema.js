@@ -1,21 +1,32 @@
 export const typeDefs = `
+    enum ActionType {
+        ALERT
+        BLOCK
+    }
+
+    enum Scope {
+        URL
+        IP
+        BODY
+    }
+
     type Rule {
         id: ID!
         name: String!
         description: String
-        severity: Int!         # Niveau de gravité (0-10)
-        action: String!        # Action à prendre (ex : "block", "alert", etc.)
+        action: ActionType!     # Action à prendre ("ALERT" ou "BLOCK")
         createdAt: String!
         updatedAt: String!
-        pattern: String        # Regex
+        pattern: String!        # Regex
+        scope: Scope!           # Champ à analyser ("URL", "IP" ou "BODY")
     }
 
     input RuleInput {
         name: String!
         description: String
-        severity: Int!        
-        action: String!      
-        pattern: String 
+        action: ActionType!      
+        pattern: String!
+        scope: Scope!
     }
 
     type Query {
@@ -25,6 +36,7 @@ export const typeDefs = `
 
     type Mutation {
         createRule(input: RuleInput!): Rule!
+        deleteRule(id: ID!): Rule!
     }
 
 `;
