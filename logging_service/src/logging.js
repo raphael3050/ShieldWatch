@@ -1,9 +1,33 @@
 import express from 'express';
 import { getLogs, addLog } from './log.js';
+import axios from 'axios';
+
 var router = express.Router();
 
+async function checkAuthentication(req, res, next) {
+    const token = req.headers['authorization'];
+
+    if (!token) {
+        return res.status(403).json({ message: 'Token requis' });
+    }
+
+    try {
+        //  vérification du token
+        const response = await axios.get(`http://auth-service:3004/admin`, {
+            headers: { Authorization: token },
+        });
+
+        if (response.status === 200) {
+            // L'authentification a réussi
+            next();
+        }
+    } catch (error) {
+        res.status(403).json({ message: 'Accès refusé, vous devez être admin' });
+    }
+}
+
 // Route pour obtenir tous les logs
-router.get('/', async (req, res) => {
+router.get('/', checkAuthentication, async (req, res) => {
     console.log("[+] GET /log");
     const result = await getLogs();
     if (result.success) {

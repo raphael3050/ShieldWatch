@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const LOGGING_SERVICE_URL = 'http://logging-service:3002/log'; // Adapter l'URL et le port du service de logging
-const NOTIFICATION_SERVICE_URL = 'http://notify-service:3003/notify/slack'; // Adapter l'URL et le port du service de notification
+const LOGGING_SERVICE_URL = 'http://logging-service:3002/log'; // port du service de logging
+const NOTIFICATION_SERVICE_URL = 'http://notify-service:3003/notify/slack'; // port du service de notification
 
 // Fonction pour envoyer un message au service de logging
 async function manageEvent(logData) {

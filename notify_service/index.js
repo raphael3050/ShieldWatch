@@ -16,8 +16,14 @@ app.get('/', (req, res) => {
 // Configuration du middleware pour le monitoring (POST des données)
 app.use('/notify', notify);
 
+const PORT = process.env.PORT;
+if (!PORT) {
+    console.error('[-] Définissez la variable d\'environnement PORT dans le fichier docker-compose.yml');
+    process.exit(1);
+}
+
 // Lancer le serveur
-app.listen(3003, () => {
+app.listen(PORT, () => {
     console.log("Server is running on port 3003");
     console.log(`Notify endpoint available at http://localhost:3003`);
 });

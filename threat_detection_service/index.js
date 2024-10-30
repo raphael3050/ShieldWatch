@@ -47,7 +47,7 @@ app.use('/monitor', monitor);
 // Lancer le serveur
 const PORT = process.env.PORT
 if (!PORT) {
-    console.error("PORT is required in the docker compose file");
+    console.error("[-] Définissez la variable d\'environnement PORT dans le fichier docker-compose.yml");
     process.exit(1);
 }
 

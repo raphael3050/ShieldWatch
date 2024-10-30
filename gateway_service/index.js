@@ -16,8 +16,8 @@ app.get('/', (req, res) => {
 app.use('/api', api);
 
 // Lancer le serveur
-app.listen(3004, () => {
+app.listen(3000, () => {
     console.log("-----------------------------------------------------------");
-    console.log("The server is running on http://localhost:3004");
+    console.log("The server is running on http://localhost:3000");
     console.log("-----------------------------------------------------------");
 });

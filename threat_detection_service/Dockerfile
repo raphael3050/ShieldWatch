@@ -1,9 +1,5 @@
-# microserviceA/Dockerfile
-
-# Utiliser une image Node.js officielle
 FROM node:18-alpine
 
-# Définir le répertoire de travail dans le conteneur
 WORKDIR /usr/src/app
 
 # Copier package.json et installer les dépendances
@@ -15,5 +11,4 @@ COPY . .
 
 EXPOSE 3001
 
-# Commande pour démarrer l'application
 CMD ["npm", "start"]

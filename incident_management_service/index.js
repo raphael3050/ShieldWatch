@@ -24,6 +24,12 @@ const startConsumer = async () => {
     }
 };
 
+const PORT = process.env.PORT;
+if (!PORT) {
+    console.error('[-] Définissez la variable d\'environnement PORT dans le fichier docker-compose.yml');
+    process.exit(1);
+}
+
 // Lancer le serveur
 app.listen(3000, () => {
     console.log("Server is running on port 3000");

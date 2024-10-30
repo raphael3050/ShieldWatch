@@ -39,13 +39,13 @@ services:
   threat-detection-service:
     build: ./threat_detection_service
     ports:
-      - "3001:3001"
+      - "3000:3000"
     networks:
       - shieldwatch-network
     environment:
       - KAFKA_BROKER=kafka:9092
       - MONGODB_URI=mongodb://mongodb:27017/threat-detection
-      - PORT=3001
+      - PORT=3000
     depends_on:
       - kafka
       - mongodb
@@ -53,34 +53,51 @@ services:
   incident-management-service:
     build: ./incident_management_service
     ports:
-      - "3000:3000"
+      - "3001:3001"
     networks:
       - shieldwatch-network
     environment:
       - KAFKA_BROKER=kafka:9092
+      - PORT=3001
     depends_on:
       - threat-detection-service
       - kafka
 
-  logging-service:
-    build: ./logging_service
+  auth-service:
+    build: ./auth_service
     ports:
       - "3002:3002"
     networks:
       - shieldwatch-network
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/logging
-    depends_on:
-      - mongodb
+      - PORT=3002
+      - ADMIN_LOGIN=${ADMIN_LOGIN}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
 
-  notify-service:
-    build: ./notify_service
+  logging-service:
+    build: ./logging_service
     ports:
       - "3003:3003"
     networks:
       - shieldwatch-network
     environment:
-      - SLACK_WEBHOOK_URL=https://hooks.slack.com/services/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
+      - MONGODB_URI=mongodb://mongodb:27017/logging
+      - PORT=3003
+    depends_on:
+      - mongodb
+      - auth-service
+
+  notify-service:
+    build: ./notify_service
+    ports:
+      - "3004:3004"
+    networks:
+      - shieldwatch-network
+    environment:
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - PORT=3004
+
 
 networks:
   shieldwatch-network:

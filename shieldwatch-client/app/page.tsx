@@ -1,75 +1,18 @@
 "use client";
 /* eslint no-console: ["error", { allow: ["log", "error"] }] */
-import { Card, CardHeader, CardBody } from "@nextui-org/card";
-import { Divider } from "@nextui-org/divider";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { useState } from "react";
+import ThreatDetection from "@/components/threat-detection";
+import Logging from "@/components/logging";
 
 export default function Home() {
-  // State pour stocker l'IP et le contenu de la requête
-  const [ipAddress, setIpAddress] = useState("");
-  const [requestData, setRequestData] = useState("");
-
-  // Fonction pour gérer l'envoi de la requête
-  const handleSendRequest = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/monitor", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Forwarded-For": ipAddress,
-        },
-        body: JSON.stringify({ requestData }),
-      });
-
-      if (response.ok) {
-        alert("Requête envoyée avec succès !");
-      } else {
-        alert("Échec de la requête.");
-      }
-    } catch (error) {
-      console.log(error);
-      alert("Erreur lors de l'envoi de la requête.");
-    }
-  };
-
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <h1 className="text-4xl font-bold text-center">ShieldWatch</h1>
 
       {/* Card pour le Threat Detection Service */}
-      <Card className="w-full mt-4">
-        <CardHeader>
-          <h2 className="text-lg font-semibold">Threat Detection Service</h2>
-        </CardHeader>
-        <Divider />
-        <CardBody>
-          <p className="text-sm">
-            You can use the following form to generate a request with chosen
-            parameters.
-          </p>
-          <div className="flex flex-col gap-4 mt-4">
-            <Input
-              isClearable
-              label="Adresse IP"
-              placeholder="Entrez une fausse adresse IP"
-              value={ipAddress}
-              onChange={(e) => setIpAddress(e.target.value)}
-            />
-            <Input
-              isClearable
-              label="Contenu de la requête"
-              placeholder="Entrez le contenu de la requête"
-              value={requestData}
-              onChange={(e) => setRequestData(e.target.value)}
-            />
-            <Button className="mt-4" onClick={handleSendRequest}>
-              Envoyer la requête
-            </Button>
-          </div>
-        </CardBody>
-      </Card>
+      <ThreatDetection />
+
+      {/* Card pour le Logging Service */}
+      <Logging />
     </section>
   );
 }

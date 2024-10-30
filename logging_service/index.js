@@ -22,7 +22,13 @@ app.get('/', (req, res) => {
 
 app.use('/log', logging);
 
+const PORT = process.env.PORT;
+if (!PORT) {
+    console.error('[-] Definissez la variable d\'environnement PORT dans le fichier docker-compose.yml');
+    process.exit(1);
+}
+
 // Lancer le serveur
-app.listen(3002, () => {
+app.listen(PORT, () => {
     console.log("Server is running on port 3000");
 });

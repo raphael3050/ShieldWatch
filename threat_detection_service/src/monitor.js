@@ -26,5 +26,4 @@ router.post('/', async function (req, res) {
     }
 });
 
-//export this router to use in our index.js
 export default router;
