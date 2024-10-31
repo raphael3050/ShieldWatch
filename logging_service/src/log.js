@@ -49,4 +49,30 @@ async function getLogs() {
     }
 }
 
-export { addLog, getLogs };
+
+async function deleteLogById(id) {
+    try {
+        const result = await Log.findByIdAndDelete(id);
+        if (result) {
+            return { success: true, message: `Log avec l'ID ${id} supprimé.` };
+        } else {
+            return { success: false, message: `Aucun log trouvé avec l'ID ${id}.` };
+        }
+    } catch (error) {
+        console.error(`Erreur lors de la suppression du log avec l'ID ${id}:`, error);
+        return { success: false, error };
+    }
+}
+
+// Fonction pour supprimer tous les logs
+async function deleteAllLogs() {
+    try {
+        const result = await Log.deleteMany({});
+        return { success: true, message: `${result.deletedCount} logs supprimés.` };
+    } catch (error) {
+        console.error('Erreur lors de la suppression de tous les logs:', error);
+        return { success: false, error };
+    }
+}
+
+export { addLog, getLogs, deleteLogById, deleteAllLogs };

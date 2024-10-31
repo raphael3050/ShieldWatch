@@ -1,13 +1,20 @@
 import express from 'express';
 import router from './src/routeur.js';
 import dotenv from 'dotenv';
-
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
 
 // Middleware pour parser le JSON
 app.use(express.json());
+app.use(cors());
+
+// Logg
+app.use((req, res, next) => {
+    console.log(`[${new Date().toLocaleString()}] ${req.method} ${req.url} ${req.body ? JSON.stringify(req.body) : ''}`);
+    next();
+});
 
 // Autres routes
 app.get('/', (req, res) => {

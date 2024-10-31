@@ -35,9 +35,11 @@ services:
     volumes:
       - mongodb_data:/data/db
 
-
   threat-detection-service:
     build: ./threat_detection_service
+    volumes:
+      - ./threat_detection_service:/usr/src/app
+      - ignore:/usr/src/app/threat_detection_service/node_modules
     ports:
       - "3000:3000"
     networks:
@@ -52,6 +54,9 @@ services:
 
   incident-management-service:
     build: ./incident_management_service
+    volumes:
+      - ./incident_management_service:/usr/src/app
+      - ignore:/usr/src/app/incident_management_service/node_modules
     ports:
       - "3001:3001"
     networks:
@@ -65,6 +70,9 @@ services:
 
   auth-service:
     build: ./auth_service
+    volumes:
+      - ./auth_service:/usr/src/app
+      - ignore:/usr/src/app/auth_service/node_modules
     ports:
       - "3002:3002"
     networks:
@@ -77,6 +85,9 @@ services:
 
   logging-service:
     build: ./logging_service
+    volumes:
+      - ./logging_service:/usr/src/app
+      - ignore:/usr/src/app/logging_service/node_modules
     ports:
       - "3003:3003"
     networks:
@@ -90,6 +101,9 @@ services:
 
   notify-service:
     build: ./notify_service
+    volumes:
+      - ./notify_service:/usr/src/app
+      - ignore:/usr/src/app/notify_service/node_modules
     ports:
       - "3004:3004"
     networks:
@@ -98,6 +112,19 @@ services:
       - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
       - PORT=3004
 
+  gateway-service:
+    build: ./gateway_service
+    volumes:
+      - ./gateway_service:/usr/src/app
+      - ignore:/usr/src/app/gateway_service/node_modules
+    ports:
+      - "3005:3005"
+    networks:
+      - shieldwatch-network
+    environment:
+      - PORT=3005
+    depends_on:
+      - auth-service
 
 networks:
   shieldwatch-network:
@@ -105,3 +132,4 @@ networks:
 
 volumes:
   mongodb_data:
+  ignore:

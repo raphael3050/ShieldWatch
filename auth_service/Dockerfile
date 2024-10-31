@@ -9,6 +9,4 @@ RUN npm install
 # Copier tout le reste du projet dans le conteneur
 COPY . .
 
-EXPOSE 3002
-
-CMD ["npm", "start"]
+CMD ["npm", "run","watch"]

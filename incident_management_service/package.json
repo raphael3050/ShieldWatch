@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "watch": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.1",
-    "kafkajs": "^2.2.4"
+    "kafkajs": "^2.2.4",
+    "nodemon": "^3.1.7"
   }
 }

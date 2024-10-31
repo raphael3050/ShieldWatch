@@ -1,5 +1,5 @@
 import express from 'express';
-import { getLogs, addLog } from './log.js';
+import { getLogs, addLog, deleteLogById, deleteAllLogs } from './log.js';
 import axios from 'axios';
 
 var router = express.Router();
@@ -12,16 +12,23 @@ async function checkAuthentication(req, res, next) {
     }
 
     try {
-        //  vérification du token
-        const response = await axios.get(`http://auth-service:3004/admin`, {
-            headers: { Authorization: token },
-        });
+        // vérification du token
+        const response = await axios.post(
+            'http://auth-service:3002/auth/verify',
+            {}, // corps de la requête vide
+            {
+                headers: {
+                    Authorization: token
+                }
+            }
+        );
 
         if (response.status === 200) {
             // L'authentification a réussi
             next();
         }
     } catch (error) {
+        console.error(error);
         res.status(403).json({ message: 'Accès refusé, vous devez être admin' });
     }
 }
@@ -41,10 +48,7 @@ router.get('/', checkAuthentication, async (req, res) => {
 router.post('/', async (req, res) => {
     console.log("[+] POST /log");
     console.log("[+] Adding a new log");
-    const eventType = req.body.event;
-    const description = req.body.description;
-    const ipAdress = req.body.ip;
-    const details = req.body.details;
+    const { eventType, description, ipAdress, details } = req.body;
 
     if (!eventType || !description || !ipAdress || !details) {
         return res.status(400).json({ error: "Les champs 'eventType', 'description', 'ipAdress' et 'details' sont requis" });
@@ -55,6 +59,28 @@ router.post('/', async (req, res) => {
         res.status(201).json(result.log);
     } else {
         res.status(500).json({ error: "Erreur lors de la création du log" });
+    }
+});
+
+// Route pour supprimer un log par ID
+router.delete('/:id', checkAuthentication, async (req, res) => {
+    console.log(`[+] DELETE /log/${req.params.id}`);
+    const result = await deleteLogById(req.params.id);
+    if (result.success) {
+        res.status(200).json({ message: result.message });
+    } else {
+        res.status(404).json({ error: result.message || "Erreur lors de la suppression du log" });
+    }
+});
+
+// Route pour supprimer tous les logs
+router.delete('/', checkAuthentication, async (req, res) => {
+    console.log("[+] DELETE /log (all logs)");
+    const result = await deleteAllLogs();
+    if (result.success) {
+        res.status(200).json({ message: result.message });
+    } else {
+        res.status(500).json({ error: "Erreur lors de la suppression de tous les logs" });
     }
 });
 
