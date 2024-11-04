@@ -25,18 +25,21 @@ export function generateToken(user) {
 
 // Middleware pour vérifier le token
 export function verifyToken(req, res, next) {
-    const token = req.headers['authorization'];
-
+    // Récupérer le token depuis les cookies
+    const token = req.cookies.token;
     if (!token) return res.status(403).json({ message: 'Token requis' });
 
     // Vérifier la validité du token
-    jwt.verify(token.split(" ")[1], process.env.JWT_SECRET, (err, decoded) => {
-        if (err) return res.status(403).json({ message: 'Token invalide' });
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) return res.status(403).json({ message: "Token Invalide" });
+
         if (decoded.role !== 'admin') return res.status(403).json({ message: 'Accès refusé' });
         req.user = decoded;
         next();
     });
 }
+
+
 
 
 export function verifyCredentials(username, password) {

@@ -4,7 +4,9 @@ import { typeDefs } from './src/db/graphql/schema.js';
 import { resolvers } from './src/db/graphql/resolvers.js';
 import monitor from './src/monitor.js';
 import { connect } from './src/db/mongo.js';
-import { connectKafka } from './src/kafka/producer.js';
+import { initializeConsumer } from './src/kafka/consumer.js';
+import { initializeProducer } from './src/kafka/producer.js';
+
 import cors from 'cors';
 
 // Connexion à MongoDB
@@ -15,9 +17,6 @@ if (!MONGO_URI) {
 } else {
     connect(MONGO_URI);
 }
-
-// Connexion à Kafka
-connectKafka();
 
 // Initialisation de l'application Express
 const app = express();
@@ -36,6 +35,13 @@ async function startApolloServer() {
 }
 startApolloServer();
 
+
+// Logging
+app.use((req, res, next) => {
+    console.log(`[${new Date().toLocaleString()}] ${req.method} ${req.url} ${req.body ? JSON.stringify(req.body) : ''}`);
+    next();
+});
+
 // Autres routes
 app.get('/', (req, res) => {
     res.send("Welcome to the threat detection service.");
@@ -52,6 +58,9 @@ if (!PORT) {
 }
 
 app.listen(PORT, () => {
+    // Connexion à Kafka
+    initializeProducer();
+    initializeConsumer();
     console.log("Server is running on port " + PORT);
     console.log("GraphQL endpoint: http://localhost:" + PORT + "/graphql");
 });

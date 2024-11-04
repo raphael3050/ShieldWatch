@@ -1,34 +1,23 @@
 // consumer.js
-import { Kafka } from 'kafkajs';
-import manageEvent from '../manager.js';
+import KafkaService from './kafka.js';
 
-const kafka = new Kafka({
-  clientId: 'incident-management-service',
-  brokers: [process.env.KAFKA_BROKER],
-});
+const kafkaService = new KafkaService();
 
-const consumer = kafka.consumer({ groupId: 'incident-group' });
+export const initializeConsumer = async () => {
+  await kafkaService.connectConsumer('events');
 
-const consumeMessages = async () => {
-  try {
-    await consumer.connect();
-    console.log('[+] Connected to Kafka');
-  } catch (error) {
-    console.error('Failed to connect to Kafka', error);
-    return;
-  }
-
-
-  await consumer.subscribe({ topic: 'events', fromBeginning: true });
-
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        value: message.value.toString(),
-      });
-      await manageEvent(JSON.parse(message.value.toString()));
-    },
+  await kafkaService.runConsumer(async ({ topic, partition, message }) => {
+    const receivedMessage = message.value.toString();
+    console.log(`[+] Received message on topic ${topic}: ${receivedMessage}`);
+    handleResponse(receivedMessage);
   });
 };
 
-export default consumeMessages;
+const handleResponse = (message) => {
+  console.log(`[+] Processing response: ${message}`);
+};
+
+export function getConsumerStatus() {
+  return kafkaService.isConsumerConnected;
+}
+

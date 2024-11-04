@@ -19,11 +19,21 @@ router.post('/login', [
     if (verifyCredentials(username, password)) {
         const token = generateToken(adminUser);
         console.log(`[+] Token généré pour ${username}`);
-        res.status(200).json({ message: 'Authentifié avec succès', token });
+
+        // Configuration du cookie HttpOnly
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure : false, // doit être true en production (HTTPS)
+            sameSite: 'none', 
+            maxAge: 3600000,
+        });
+
+        res.status(200).json({ message: 'Authentifié avec succès' });
     } else {
         res.status(401).json({ message: 'Nom d’utilisateur ou mot de passe incorrect' });
     }
 });
+
 
 router.post('/verify', verifyToken, (req, res) => {
     res.json({ message: 'Token valide', user: req.user });

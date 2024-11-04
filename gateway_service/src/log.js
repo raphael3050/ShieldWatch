@@ -12,7 +12,11 @@ router.get('/', createProxyMiddleware({
     },
     changeOrigin: true,
     on: {
-        proxyReq: fixRequestBody,
+        proxyReq: (proxyReq, req) => {
+            if (!proxyReq.getHeader('Content-Type')) {
+                proxyReq.setHeader('Content-Type', 'application/json'); // Définit le type de contenu
+            }
+        },
     },
 }));
 

@@ -1,10 +1,12 @@
 import express from 'express';
 import logging from './src/logging.js';
 import { connect } from './src/db/mongo.js';
+import cookieParser from 'cookie-parser';
 
 // Initialisation de l'application Express
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 // Connexion à MongoDB
 const MONGO_URI = process.env.MONGODB_URI

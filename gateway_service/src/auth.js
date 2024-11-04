@@ -17,15 +17,22 @@ router.post('/login', createProxyMiddleware({
 );
 
 // Redirection des requêtes vers le endpoint de vérification de token de l'auth-service
-router.post('/verify', createProxyMiddleware({
-    target: 'http://auth-service:3002',
-    changeOrigin: true,
-    pathRewrite: {
-        '^/verify': '/auth/verify',
-    },
-    on: {
-        proxyReq: fixRequestBody,
-    },
-}));
+router.post(
+    '/verify',
+    createProxyMiddleware({
+        target: 'http://auth-service:3002',
+        changeOrigin: true,
+        pathRewrite: {
+            '^/verify': '/auth/verify',
+        },
+        on: {
+            proxyReq: (proxyReq, req) => {
+                if (!proxyReq.getHeader('Content-Type')) {
+                    proxyReq.setHeader('Content-Type', 'application/json'); // Définit le type de contenu
+                }
+            },
+        },
+    })
+);
 
 export default router;

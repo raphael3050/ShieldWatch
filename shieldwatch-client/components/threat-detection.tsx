@@ -14,7 +14,7 @@ export default function ThreatDetection() {
   // Fonction pour gérer l'envoi de la requête POST
   const handleSendRequest = async () => {
     try {
-      const response = await fetch("http://localhost:3001/monitor", {
+      const response = await fetch("http://localhost:3000/monitor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export default function ThreatDetection() {
   // Fonction pour gérer l'envoi de la requête GET
   const handleGetRequest = async () => {
     try {
-      const response = await fetch("http://localhost:3001/monitor/status", {
+      const response = await fetch("http://localhost:3005/monitor/status", {
         method: "GET",
       });
 

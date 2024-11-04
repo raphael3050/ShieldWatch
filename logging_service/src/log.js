@@ -52,7 +52,11 @@ async function getLogs() {
 
 async function deleteLogById(id) {
     try {
-        const result = await Log.findByIdAndDelete(id);
+        // verifier si l'id est un objet mongoose
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return { success: false, message: 'ID invalide.' };
+        }
+        const result = await Log.findByIdAndDelete(String(id));
         if (result) {
             return { success: true, message: `Log avec l'ID ${id} supprimé.` };
         } else {

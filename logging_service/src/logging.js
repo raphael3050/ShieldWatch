@@ -5,23 +5,20 @@ import axios from 'axios';
 var router = express.Router();
 
 async function checkAuthentication(req, res, next) {
-    const token = req.headers['authorization'];
+    const token = req.cookies.token;
 
     if (!token) {
         return res.status(403).json({ message: 'Token requis' });
     }
 
     try {
-        // vérification du token
-        const response = await axios.post(
-            'http://auth-service:3002/auth/verify',
-            {}, // corps de la requête vide
-            {
-                headers: {
-                    Authorization: token
-                }
+        // vérification du cookie
+        const response = await axios.post('http://auth-service:3002/auth/verify', {}, {
+            headers: {
+                Cookie: `token=${token}`
             }
-        );
+        });
+
 
         if (response.status === 200) {
             // L'authentification a réussi
@@ -48,7 +45,15 @@ router.get('/', checkAuthentication, async (req, res) => {
 router.post('/', async (req, res) => {
     console.log("[+] POST /log");
     console.log("[+] Adding a new log");
-    const { eventType, description, ipAdress, details } = req.body;
+    const eventType = req.body.event;
+    const description = req.body.description;
+    const ipAdress = req.body.ip;
+    const details = req.body.details;
+    console.log(req.body);
+    console.log(eventType);
+    console.log(description);
+    console.log(ipAdress);
+    console.log(details);
 
     if (!eventType || !description || !ipAdress || !details) {
         return res.status(400).json({ error: "Les champs 'eventType', 'description', 'ipAdress' et 'details' sont requis" });

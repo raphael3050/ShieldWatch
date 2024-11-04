@@ -1,7 +1,6 @@
 "use client";
 /* eslint no-console: ["error", { allow: ["log", "error"] }] */
 import ThreatDetection from "@/components/threat-detection";
-import Logging from "@/components/logging";
 
 export default function Home() {
   return (
@@ -10,9 +9,6 @@ export default function Home() {
 
       {/* Card pour le Threat Detection Service */}
       <ThreatDetection />
-
-      {/* Card pour le Logging Service */}
-      <Logging />
     </section>
   );
 }

@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
-# Copier tout le reste du projet dans le conteneur
+# Copier le reste du projet dans le conteneur
 COPY . .
 
 CMD ["npm", "run","watch"]

@@ -1,13 +1,17 @@
 import express from 'express';
 var router = express.Router();
 import analyzeThreat  from './threatAnalyzer.js';
-import isKafkaConnected from  './kafka/producer.js';
+import { getProducerStatus } from './kafka/producer.js';
+import { getConsumerStatus } from './kafka/consumer.js';
+
 import isMongoConnected from './db/mongo.js';
+
+
 
 router.get('/status', function (req, res) {
     console.log("[+] GET /monitor/status");
     // tester si kafka est connecté
-    if (isKafkaConnected && isMongoConnected) {
+    if (getConsumerStatus()&& getProducerStatus() && isMongoConnected) {
         res.send("The service is connected to Kafka and MongoDB and ready to process requests");
     } else {
         res.status(500).send("The service is not connected to Kafka or MongoDB");

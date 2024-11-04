@@ -2,14 +2,21 @@ import express from 'express';
 import router from './src/routeur.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 const app = express();
 
+const corsOptions = {
+    origin: true,     // Attention : à modifier en production
+    credentials: true,     // Autorise les cookies
+};
+
+
 // Middleware pour parser le JSON
 app.use(express.json());
-app.use(cors());
-
+app.use(cors(corsOptions));
+app.use(cookieParser());
 // Logg
 app.use((req, res, next) => {
     console.log(`[${new Date().toLocaleString()}] ${req.method} ${req.url} ${req.body ? JSON.stringify(req.body) : ''}`);

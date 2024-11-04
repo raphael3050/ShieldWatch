@@ -34,6 +34,9 @@ services:
       - shieldwatch-network
     volumes:
       - mongodb_data:/data/db
+    command: 
+      - '--logpath'
+      - '/var/log/mongodb/mongod.log'
 
   threat-detection-service:
     build: ./threat_detection_service
@@ -125,6 +128,21 @@ services:
       - PORT=3005
     depends_on:
       - auth-service
+
+  response-service:
+    build: ./response_service
+    volumes:
+      - ./response_service:/usr/src/app
+      - ignore:/usr/src/app/response_service/node_modules
+    ports:
+      - "3006:3006"
+    networks:
+      - shieldwatch-network
+    environment:
+      - KAFKA_BROKER=kafka:9092
+      - PORT=3006
+    depends_on:
+      - kafka
 
 networks:
   shieldwatch-network:
