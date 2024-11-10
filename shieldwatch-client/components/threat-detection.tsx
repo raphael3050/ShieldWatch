@@ -11,7 +11,6 @@ export default function ThreatDetection() {
   // State pour stocker l'IP, le contenu de la requête et la réponse brute du serveur
   const [ipAddress, setIpAddress] = useState("");
   const [requestData, setRequestData] = useState("");
-  const [requestUrl, setUrl] = useState("");
   const [serverResponse, setServerResponse] = useState("");
 
   // Fonction pour gérer l'envoi de la requête POST
@@ -22,7 +21,6 @@ export default function ThreatDetection() {
         headers: {
           "Content-Type": "application/json",
           "X-Forwarded-For": ipAddress,
-          Origin: requestUrl,
         },
         body: JSON.stringify({ requestData }),
       });
@@ -80,13 +78,6 @@ export default function ThreatDetection() {
             placeholder="Entrez le contenu de la requête"
             value={requestData}
             onChange={(e) => setRequestData(e.target.value)}
-          />
-          <Input
-            isClearable
-            label="URL de la requête"
-            placeholder="Entrez l'url de la requête"
-            value={requestUrl}
-            onChange={(e) => setUrl(e.target.value)}
           />
           <Button className="mt-4" onClick={handleSendRequest}>
             Envoyer la requête POST

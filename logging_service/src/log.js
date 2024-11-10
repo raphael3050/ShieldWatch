@@ -18,7 +18,7 @@ logSchema.plugin(immutablePlugin);
 // Hook pour générer un hash avant de sauvegarder le log
 logSchema.pre('validate', async function (next) {
     const logData = this.toObject();
-    delete logData._id; // Exclure l'ID pour éviter des variations dans le hash
+    delete logData._id;
     this.hash = await hash(JSON.stringify(logData), { algorithm: 'sha256' });
     next();
 });

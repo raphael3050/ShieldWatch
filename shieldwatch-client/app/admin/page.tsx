@@ -3,6 +3,7 @@
 import { title } from "@/components/primitives";
 import Logging from "@/components/logging";
 import ThreatDetectionAdmin from "@/components/threat-detection-admin";
+import Authentication from "@/components/authentication";
 
 export default function AdminPage() {
   return (
@@ -11,6 +12,7 @@ export default function AdminPage() {
       <p>Bienvenue dans la section admin. Accès réservé aux administrateurs.</p>
       <Logging />
       <ThreatDetectionAdmin />
+      <Authentication />
     </div>
   );
 }

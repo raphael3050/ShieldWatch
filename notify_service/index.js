@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Autres routes
 app.get('/', (req, res) => {
-    res.send("Welcome to the notify service.");
+    res.send("Welcome to the notify service. The service is running. ✅");
 });
 
 // Configuration du middleware pour le monitoring (POST des données)
