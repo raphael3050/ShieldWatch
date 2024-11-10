@@ -1,18 +1,7 @@
 // producer.js
-import KafkaService from "./kafka.js";
-
-const kafkaService = new KafkaService();
-
+import kafkaService from "./kafka.js";
 export const initializeProducer = async () => {
   await kafkaService.connectProducer();
-};
-
-export const sendMessage = async (message) => {
-  try {
-    await kafkaService.sendMessage('responses', message);
-  } catch (error) {
-    console.error('[-] Error sending message:', error);
-  }
 };
 
 export function getProducerStatus() {

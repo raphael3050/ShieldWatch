@@ -49,12 +49,6 @@ router.post('/', async (req, res) => {
     const description = req.body.description;
     const ipAdress = req.body.ip;
     const details = req.body.details;
-    console.log(req.body);
-    console.log(eventType);
-    console.log(description);
-    console.log(ipAdress);
-    console.log(details);
-
     if (!eventType || !description || !ipAdress || !details) {
         return res.status(400).json({ error: "Les champs 'eventType', 'description', 'ipAdress' et 'details' sont requis" });
     }

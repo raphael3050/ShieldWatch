@@ -11,10 +11,7 @@ app.get('/', (req, res) => {
     res.send("Welcome to the incident management service.");
 });
 
-// Configuration du middleware pour le monitoring (POST des données)
 app.use('/response', router);
-
-
 
 const PORT = process.env.PORT;
 if (!PORT) {

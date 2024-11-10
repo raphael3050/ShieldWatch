@@ -4,30 +4,30 @@ import { Divider } from "@nextui-org/divider";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useState } from "react";
+import ReactJsonPretty from "react-json-pretty";
+import "react-json-pretty/themes/monikai.css";
 
 export default function ThreatDetection() {
   // State pour stocker l'IP, le contenu de la requête et la réponse brute du serveur
   const [ipAddress, setIpAddress] = useState("");
   const [requestData, setRequestData] = useState("");
+  const [requestUrl, setUrl] = useState("");
   const [serverResponse, setServerResponse] = useState("");
 
   // Fonction pour gérer l'envoi de la requête POST
   const handleSendRequest = async () => {
     try {
-      const response = await fetch("http://localhost:3000/monitor", {
+      const response = await fetch("http://localhost:8080/monitor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-Forwarded-For": ipAddress,
+          Origin: requestUrl,
         },
         body: JSON.stringify({ requestData }),
       });
 
-      if (response.ok) {
-        alert("Requête envoyée avec succès !");
-      } else {
-        alert("Échec de la requête.");
-      }
+      setServerResponse(await response.text());
     } catch (error) {
       console.log(error);
       alert("Erreur lors de l'envoi de la requête.");
@@ -37,7 +37,7 @@ export default function ThreatDetection() {
   // Fonction pour gérer l'envoi de la requête GET
   const handleGetRequest = async () => {
     try {
-      const response = await fetch("http://localhost:3005/monitor/status", {
+      const response = await fetch("http://localhost:8080/monitor/status", {
         method: "GET",
       });
 
@@ -81,6 +81,13 @@ export default function ThreatDetection() {
             value={requestData}
             onChange={(e) => setRequestData(e.target.value)}
           />
+          <Input
+            isClearable
+            label="URL de la requête"
+            placeholder="Entrez l'url de la requête"
+            value={requestUrl}
+            onChange={(e) => setUrl(e.target.value)}
+          />
           <Button className="mt-4" onClick={handleSendRequest}>
             Envoyer la requête POST
           </Button>
@@ -89,9 +96,11 @@ export default function ThreatDetection() {
             GET <code>/monitor/status</code>
           </Button>
           {serverResponse && (
-            <div className="mt-4 p-4 dark:bg-neutral-900 rounded border border-neutral-600">
+            <div>
               <h3 className="text-md font-semibold">Réponse du serveur :</h3>
-              <pre>{serverResponse}</pre>
+              <div className="mt-4 p-4 dark:bg-neutral-900 rounded border border-neutral-600">
+                <ReactJsonPretty data={serverResponse} />
+              </div>
             </div>
           )}
         </div>

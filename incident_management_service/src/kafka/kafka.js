@@ -1,6 +1,19 @@
 // kafka.js
 import { Kafka } from 'kafkajs';
 
+
+/**
+ * Classe qui gère la connexion et la communication avec le service Kafka.
+ * attributs:
+ * - kafka: objet Kafka
+ * - producer: objet Producer
+ * - consumer: objet Consumer
+ * - isConsumerConnected: booléen qui indique si le consumer est connecté
+ * méthodes:
+ * - connectConsumer(topic): connecte le consumer à un topic
+ * - runConsumer(eachMessageHandler): lance le consumer
+ * - get isConsumerConnected(): getter pour isConsumerConnected
+ */
 class KafkaService {
   #isConsumerConnected;
 

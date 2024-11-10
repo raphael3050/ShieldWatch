@@ -37,6 +37,7 @@ export const typeDefs = `
     type Mutation {
         createRule(input: RuleInput!): Rule!
         deleteRule(id: ID!): Rule!
+        deleteAllRules: [Rule!]!
     }
 
 `;

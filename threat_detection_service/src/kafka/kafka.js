@@ -1,5 +1,5 @@
-// kafka.js
 import { Kafka } from 'kafkajs';
+import { v4 as uuidv4 } from 'uuid';
 
 class KafkaService {
   #isProducerConnected;
@@ -18,11 +18,12 @@ class KafkaService {
     });
 
     this.producer = this.kafka.producer();
-    this.consumer = this.kafka.consumer({ groupId: 'threat-detection-group' });
+    this.consumer = null;  // il sera créé dynamiquement
     this.#isProducerConnected = false;
     this.#isConsumerConnected = false;
   }
 
+  // Connecte le producteur à Kafka
   async connectProducer() {
     try {
       await this.producer.connect();
@@ -34,11 +35,15 @@ class KafkaService {
     }
   }
 
+  // Connecte le consommateur à Kafka avec un groupId unique pour chaque instance
   async connectConsumer(topic) {
     try {
+      const groupId = `threat-detection-group-${uuidv4()}`;  // Générer un groupId unique pour chaque instance
+      this.consumer = this.kafka.consumer({ groupId });  // Assigner le groupId dynamique
+
       await this.consumer.connect();
       await this.consumer.subscribe({ topic, fromBeginning: true });
-      console.log(`[+] Kafka consumer connected and subscribed to topic: ${topic}`);
+      console.log(`[+] Kafka consumer connected with groupId: ${groupId} and subscribed to topic: ${topic}`);
       this.#isConsumerConnected = true;
     } catch (error) {
       this.#isConsumerConnected = false;
@@ -46,18 +51,23 @@ class KafkaService {
     }
   }
 
-  async sendMessage(topic, message) {
+  // Envoie un message à Kafka avec un key (correlationId) pour partitionner les messages
+  async sendMessage(topic, message, correlationId) {
     if (!this.#isProducerConnected) {
       throw new Error('Producer is not connected to Kafka');
     }
     await this.producer.send({
       topic,
-      messages: [{ value: message }],
+      messages: [{ value: message, key: correlationId }],
     });
-    console.log(`[+] Message sent to topic ${topic}: ${message}`);
+    console.log(`[+] Message sent to topic ${topic}: ${message}, with correlationId: ${correlationId}`);
   }
 
+  // Exécute le consommateur pour traiter les messages
   async runConsumer(eachMessageHandler) {
+    if (!this.consumer) {
+      throw new Error('Consumer is not connected');
+    }
     try {
       await this.consumer.run({
         eachMessage: eachMessageHandler,
@@ -76,4 +86,7 @@ class KafkaService {
   }
 }
 
-export default KafkaService;
+// Singleton
+const kafkaService = new KafkaService();
+
+export default kafkaService;

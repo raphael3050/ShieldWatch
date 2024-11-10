@@ -47,3 +47,14 @@ Une fois les variables d'environnement ajoutées, vous pouvez déployer l'applic
 ````
 sudo docker-compose up --build
 ````
+
+Cette commande va construire les images Docker nécessaires et démarrer les conteneurs. Attention, il faut attendre quelques instants pour que les conteneurs soient prêts.
+Vous verrez cette ligne dans la console quand l'application sera prête:
+
+````
+-----------------------------------------------------------
+[*] SHIELDWATCH
+[*] All services are running, you can now send requests.
+[+] The server is running on http://localhost:3005
+-----------------------------------------------------------
+````

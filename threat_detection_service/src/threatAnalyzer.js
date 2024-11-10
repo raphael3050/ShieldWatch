@@ -1,10 +1,20 @@
 import Rule from './db/model/rule.js';
 import { sendMessage } from './kafka/producer.js';
+
+
 /**
  * Vérifie si une chaîne correspond à une règle via son pattern.
  * @param {string} input - La chaîne à analyser.
  * @returns {Promise<Object|null>} - La règle correspondante ou null si aucune règle ne correspond.
  */
+
+
+function applyDecision(response){
+  
+}
+
+
+
 const analyzeThreat = async (url, body, ipAdress) => {
   try {
     var isMenaceDetected = false;
@@ -22,7 +32,6 @@ const analyzeThreat = async (url, body, ipAdress) => {
         case "URL":
           if (regex.test(url)) {
             console.log(`[+] Menace détectée : ${rule.name}`);
-            // Créer un objet json contenant les informations sur la menace
             threatSummary.push({ threat: rule, data: url, ip: ipAdress });
             isMenaceDetected = true;
           }
@@ -33,9 +42,6 @@ const analyzeThreat = async (url, body, ipAdress) => {
             isMenaceDetected = true;
           }
         case "IP":
-          console.log(`[+] Testing IP : ${ipAdress}`);
-          console.log(`[+] Testing regex : ${regex}`);
-          console.log(`[+] Testing result : ${regex.test(ipAdress)}`);
           if (regex.test(ipAdress)) {
             console.log(`[+] Menace détectée : ${rule.name}`);
             threatSummary.push({ threat: rule, ip: ipAdress });
@@ -47,15 +53,22 @@ const analyzeThreat = async (url, body, ipAdress) => {
     if (isMenaceDetected) {
       console.log("[+] Sending message to Kafka consumer (incident-management)...");
       for (const threat of threatSummary) {
-        await sendMessage(JSON.stringify(threat));
+        const response = await sendMessage(JSON.stringify(threat));
+        // Analyser le contenu de la réponse
+        if (response && response.action === 'BLOCK') {
+          console.log("[+] Action BLOCK détectée dans la réponse Kafka.");
+          return true; 
+        }else if(response && response.action === 'ALLOW'){
+          console.log("[+] Action ALLOW détectée dans la réponse Kafka.");
+          return false;
+        }
       }
-      return threatSummary;
     }else{
       return null;
     }
   } catch (error) {
-    console.error("Erreur lors de l'analyse des menaces :", error);
-    throw new Error("Erreur dans l'analyse des menaces");
+    console.error("[-] ERROR: Erreur lors de l'analyse des menaces :", error);
+    throw error;
   }
 };
 

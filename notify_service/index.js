@@ -24,6 +24,6 @@ if (!PORT) {
 
 // Lancer le serveur
 app.listen(PORT, () => {
-    console.log("Server is running on port 3003");
-    console.log(`Notify endpoint available at http://localhost:3003`);
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`Notify endpoint available at http://localhost:${PORT}/notify`);
 });

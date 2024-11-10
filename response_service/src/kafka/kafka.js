@@ -18,7 +18,7 @@ class KafkaService {
     });
 
     this.producer = this.kafka.producer();
-    this.consumer = this.kafka.consumer({ groupId: 'threat-detection-group' });
+    this.consumer = this.kafka.consumer({ groupId: 'response-group' });
     this.#isProducerConnected = false;
     this.#isConsumerConnected = false;
   }
@@ -46,13 +46,15 @@ class KafkaService {
     }
   }
 
-  async sendMessage(topic, message) {
+  // Modification ici pour accepter un paramètre key (qui sera le correlationId)
+  async sendMessage(topic, message, key) {
     if (!this.#isProducerConnected) {
       throw new Error('Producer is not connected to Kafka');
     }
+    console.log(`[+] Sending message to topic ${topic}: ${message}`);
     await this.producer.send({
       topic,
-      messages: [{ value: message }],
+      messages: [{ value: message, key }],  // Utilisation de key pour partitionner
     });
     console.log(`[+] Message sent to topic ${topic}: ${message}`);
   }
@@ -76,4 +78,5 @@ class KafkaService {
   }
 }
 
-export default KafkaService;
+const kafkaService = new KafkaService();
+export default kafkaService;

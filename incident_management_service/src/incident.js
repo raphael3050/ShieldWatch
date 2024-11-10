@@ -11,5 +11,7 @@ router.get('/', function (req, res) {
 });
 
 
+// TODO: Rajouter des routes ? 
+
 //export this router to use in our index.js
 export default router;

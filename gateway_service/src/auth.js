@@ -11,7 +11,7 @@ router.post('/login', createProxyMiddleware({
         '^/login': '/auth/login',
     },
     on: {
-        proxyReq: fixRequestBody, // Envoie le body de la requête POST
+        proxyReq: fixRequestBody, // on transmet également le corps de la requête
     },
 })
 );
@@ -28,7 +28,7 @@ router.post(
         on: {
             proxyReq: (proxyReq, req) => {
                 if (!proxyReq.getHeader('Content-Type')) {
-                    proxyReq.setHeader('Content-Type', 'application/json'); // Définit le type de contenu
+                    proxyReq.setHeader('Content-Type', 'application/json'); // on fixe le Content-Type
                 }
             },
         },

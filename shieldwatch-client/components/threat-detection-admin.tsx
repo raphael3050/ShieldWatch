@@ -18,7 +18,7 @@ export default function ThreatDetectionAdmin() {
           <Button
             className="mt-4"
             onClick={() =>
-              window.open("http://localhost:3000/graphql", "_blank")
+              window.open("http://localhost:8080/graphql", "_blank")
             }
           >
             Open <code>/graphql</code>

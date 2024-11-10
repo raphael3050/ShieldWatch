@@ -1,7 +1,6 @@
 // consumer.js
-import KafkaService from './kafka.js';
-
-const kafkaService = new KafkaService();
+import kafkaService from './kafka.js';
+import { handleThreatResponse } from '../response.js';
 
 export const initializeConsumer = async () => {
   await kafkaService.connectConsumer('events');
@@ -14,9 +13,12 @@ export const initializeConsumer = async () => {
 };
 
 const handleResponse = (message) => {
-  console.log(`[+] Processing threat...`);
   // Traitement de la réponse
-  
+  try {
+    handleThreatResponse(message);
+  } catch (error) {
+    console.error('[-] Error handling response:', error);
+  }
 };
 
 export function getConsumerStatus() {

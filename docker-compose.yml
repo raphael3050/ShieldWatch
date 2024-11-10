@@ -20,10 +20,17 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "events:1:1,responses:1:1"
     networks:
       - shieldwatch-network
     depends_on:
       - zookeeper
+    healthcheck:
+      test: kafka-topics --bootstrap-server kafka:9092 --list
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    
     
   mongodb:
     image: mongo:6.0
@@ -37,6 +44,11 @@ services:
     command: 
       - '--logpath'
       - '/var/log/mongodb/mongod.log'
+    healthcheck:
+      test: ["CMD","mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   threat-detection-service:
     build: ./threat_detection_service
@@ -44,16 +56,25 @@ services:
       - ./threat_detection_service:/usr/src/app
       - ignore:/usr/src/app/threat_detection_service/node_modules
     ports:
-      - "3000:3000"
+      - "3000" 
     networks:
       - shieldwatch-network
     environment:
       - KAFKA_BROKER=kafka:9092
       - MONGODB_URI=mongodb://mongodb:27017/threat-detection
       - PORT=3000
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
     depends_on:
-      - kafka
-      - mongodb
+      kafka:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    deploy: # load balancing
+      replicas: 3
 
   incident-management-service:
     build: ./incident_management_service
@@ -67,9 +88,16 @@ services:
     environment:
       - KAFKA_BROKER=kafka:9092
       - PORT=3001
+      - LOGGING_SERVICE_URL=http://logging-service:3003/log
+      - NOTIFY_SERVICE_URL=http://notify-service:3004/notify/slack
+    healthcheck:
+      test: curl --fail http://localhost:3001 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
     depends_on:
-      - threat-detection-service
-      - kafka
+      kafka:
+        condition: service_healthy
 
   auth-service:
     build: ./auth_service
@@ -82,9 +110,13 @@ services:
       - shieldwatch-network
     environment:
       - PORT=3002
-      - ADMIN_LOGIN=${ADMIN_LOGIN}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - MONGODB_URI=mongodb://mongodb:27017/threat-detection
       - JWT_SECRET=${JWT_SECRET}
+    healthcheck:
+      test: curl --fail http://localhost:3002 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   logging-service:
     build: ./logging_service
@@ -98,9 +130,16 @@ services:
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/logging
       - PORT=3003
+    healthcheck:
+      test: curl --fail http://localhost:3003 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
     depends_on:
-      - mongodb
-      - auth-service
+      mongodb:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
 
   notify-service:
     build: ./notify_service
@@ -114,20 +153,12 @@ services:
     environment:
       - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
       - PORT=3004
-
-  gateway-service:
-    build: ./gateway_service
-    volumes:
-      - ./gateway_service:/usr/src/app
-      - ignore:/usr/src/app/gateway_service/node_modules
-    ports:
-      - "3005:3005"
-    networks:
-      - shieldwatch-network
-    environment:
-      - PORT=3005
-    depends_on:
-      - auth-service
+    healthcheck:
+      test: curl --fail http://localhost:3004 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      
 
   response-service:
     build: ./response_service
@@ -141,8 +172,48 @@ services:
     environment:
       - KAFKA_BROKER=kafka:9092
       - PORT=3006
+    healthcheck:
+      test: curl --fail http://localhost:3006 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+
+  gateway-service:
+    build: ./gateway_service
+    volumes:
+      - ./gateway_service:/usr/src/app
+      - ignore:/usr/src/app/gateway_service/node_modules
+    ports:
+      - "3005:3005"
+    networks:
+      - shieldwatch-network
+    environment:
+      - PORT=3005
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      notify-service:
+        condition: service_healthy
+      incident-management-service:
+        condition: service_healthy
+      threat-detection-service:
+        condition: service_healthy
+      response-service:
+        condition: service_healthy
+      
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"  # Le port public pour accéder au load balancer
+    networks:
+      - shieldwatch-network
+    depends_on:
+      - threat-detection-service
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
 
 networks:
   shieldwatch-network:
