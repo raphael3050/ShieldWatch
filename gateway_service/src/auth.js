@@ -16,6 +16,58 @@ router.post('/login', createProxyMiddleware({
 })
 );
 
+
+// Redirection des requêtes vers le endpoint de création de l'auth-service
+router.post('/signup', createProxyMiddleware({
+    target: 'http://auth-service:3002',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/signup': '/auth/signup',
+    },
+    on: {
+        proxyReq: fixRequestBody, // on transmet également le corps de la requête
+    },
+})
+);
+
+// Redirection des requêtes vers le endpoint de récupération des utilisateurs de l'auth-service
+router.get('/users', createProxyMiddleware({
+    target: 'http://auth-service:3002',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/users': '/auth/users',
+    },
+    on: {
+        proxyReq: fixRequestBody, // on transmet également le corps de la requête
+    },
+})
+);
+
+// Redirection des requêtes vers le endpoint de mise à jour d'utilisateur
+router.put('/update/:username', createProxyMiddleware({
+    target: 'http://auth-service:3002',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/update': '/auth/update', 
+    },
+    on: {
+        proxyReq: fixRequestBody, // Transmet le corps de la requête
+    },
+}));
+
+
+router.delete('/delete/:username', createProxyMiddleware({
+    target: 'http://auth-service:3002',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/delete': '/auth/delete', 
+    },
+    on: {
+        proxyReq: fixRequestBody, // Transmet le corps de la requête
+    },
+}));
+
+
 // Redirection des requêtes vers le endpoint de vérification de token de l'auth-service
 router.post(
     '/verify',

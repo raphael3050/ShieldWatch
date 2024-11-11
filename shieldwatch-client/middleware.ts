@@ -13,7 +13,7 @@ export async function middleware(req: NextRequest) {
   try {
     // Vérifie les permissions en envoyant le token au backend
     const response = await axios.post(
-      "http://localhost:3005/auth/verify",
+      "http://gateway-service:3005/auth/verify",
       {},
       {
         withCredentials: true,
@@ -28,7 +28,8 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   } catch (error) {
-    // En cas d'erreur (401 ou autre), redirige vers la page de login
+    console.error(error);
+
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

@@ -27,7 +27,7 @@ export default function Authentication() {
   // Fonction pour récupérer tous les utilisateurs
   const handleGetUsers = async () => {
     try {
-      const response = await fetch("http://localhost:3002/auth/users", {
+      const response = await fetch("http://localhost:3005/auth/users", {
         method: "GET",
         credentials: "include",
       });
@@ -58,7 +58,7 @@ export default function Authentication() {
     }
 
     try {
-      const response = await fetch("http://localhost:3002/auth/signup", {
+      const response = await fetch("http://localhost:3005/auth/signup", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -92,7 +92,7 @@ export default function Authentication() {
 
     try {
       const response = await fetch(
-        `http://localhost:3002/auth/update/${updateUsername}`,
+        `http://localhost:3005/auth/update/${updateUsername}`,
         {
           method: "PUT",
           credentials: "include",
@@ -132,7 +132,7 @@ export default function Authentication() {
 
     try {
       const response = await fetch(
-        `http://localhost:3002/auth/delete/${deleteUsername}`,
+        `http://localhost:3005/auth/delete/${deleteUsername}`,
         {
           method: "DELETE",
           credentials: "include",

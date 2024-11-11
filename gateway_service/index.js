@@ -25,6 +25,10 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get('/', (req, res) => {
+    res.status(200).send('Welcome to the Gateway service ! This service is working correctly ✅');
+});
+
 // Routeur pour les requêtes d'authentification
 app.use('/auth', auth);
 

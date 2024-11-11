@@ -36,7 +36,7 @@ Pour le service de notification, vous devez ajouter les variables suivantes:
 SLACK_WEBHOOK_URL=your_slack_webhook_url
 ````
 
-La variable `SLACK_WEBHOOK_URL` est l'URL du webhook Slack que vous avez créé pour recevoir les notifications. Pour créer un webhook Slack, vous pouvez suivre les instructions sur le site officiel de Slack. Vous devez d'abord créer une application Slack, puis ajouter un webhook à cette application.
+La variable `SLACK_WEBHOOK_URL` est l'URL du webhook Slack que vous avez créé pour recevoir les notifications. Pour créer un webhook Slack, vous pouvez suivre les instructions sur le site officiel de Slack. Vous devez d'abord créer une application Slack, puis ajouter un webhook à cette application dans les paramètres de l'application.
 
 
 
@@ -58,3 +58,19 @@ Vous verrez cette ligne dans la console quand l'application sera prête:
 [+] The server is running on http://localhost:3005
 -----------------------------------------------------------
 ````
+
+Ensuite, il faut attendre que le client Next.js soit prêt. Vous verrez cette ligne dans la console quand le client sera prêt:
+
+````
+
+ > next-app-template@0.0.1 start
+ > next start
+
+   ▲ Next.js 14.2.4
+   - Local:        http://localhost:3000
+
+  ✓ Starting...
+  ✓ Ready in 645ms
+````
+
+Vous pouvez maintenant accéder à l'application en ouvrant votre navigateur et en allant à l'adresse `http://localhost:3000`.

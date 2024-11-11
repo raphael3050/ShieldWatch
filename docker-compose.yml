@@ -192,6 +192,11 @@ services:
       - shieldwatch-network
     environment:
       - PORT=3005
+    healthcheck:
+      test: curl --fail http://localhost:3005 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
     depends_on:
       auth-service:
         condition: service_healthy
@@ -202,6 +207,24 @@ services:
       threat-detection-service:
         condition: service_healthy
       response-service:
+        condition: service_healthy
+    
+  
+  shieldwatch-client:
+    build: ./shieldwatch-client
+    ports:
+      - "3000:3000"
+    networks:
+      - shieldwatch-network
+    environment:
+      - PORT=3000
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      gateway-service:
         condition: service_healthy
       
   nginx:

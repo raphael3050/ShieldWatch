@@ -28,7 +28,10 @@ const Login = () => {
       console.log(response.data.message); // Affiche le message de succès
 
       // Redirige vers la page d'accueil
-      await router.push("/");
+      await router.push("/admin");
+
+      // Rafraîchissement automatique de la page
+      window.location.replace("/admin");
     } catch (err) {
       setError("Échec de connexion : vérifiez vos identifiants.");
       console.error(err);

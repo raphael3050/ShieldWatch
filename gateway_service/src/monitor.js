@@ -6,7 +6,7 @@ var router = express.Router();
 
 // Redirection des requêtes vers le endpoint de vérification de token de l'auth-service
 router.get('/status', createProxyMiddleware({
-    target: 'http://threat-detection-service:3000',
+    target: 'http://nginx:8080',
     pathRewrite: {
         '^/status': '/monitor/status',
     },
