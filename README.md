@@ -8,6 +8,16 @@ Pour déployer l'application, vous aurez besoin d'une installation fonctionnelle
 Une fois le projet téléchargé, vous devez modifier le fichier `.env` à la racine du projet pour y ajouter les variables d'environnement nécessaires. Vous pouvez vous inspirer du fichier `.env.example` pour connaître les variables à ajouter.
 
 
+## Tests
+
+Pour lancer les tests d'un microservice, vous pouvez utiliser la commande suivante:
+
+````
+docker compose run {service_name} npm test
+````
+Ou service name est le nom du service (celui présent dans le ficheir docker-compose.yml) que vous voulez tester (auth, notification, ou shieldwatch).
+
+
 #### Sercice d'authentification
 
 Pour le service d'authentification, vous devez ajouter les variables suivantes:

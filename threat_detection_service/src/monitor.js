@@ -13,7 +13,7 @@ router.get('/status', function (req, res) {
     if (getConsumerStatus()&& getProducerStatus() && isMongoConnected) {
         res.send("The service is connected to Kafka and MongoDB and ready to process requests");
     } else {
-        res.status(500).send("The service is not connected to Kafka or MongoDB");
+        res.status(500).send("The service instance is not connected to Kafka or MongoDB");
     }
 });
 

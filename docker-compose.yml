@@ -73,6 +73,10 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
+      incident-management-service:
+        condition: service_healthy
+      response-service:
+        condition: service_healthy
     deploy: # load balancing
       replicas: 3
 
@@ -117,6 +121,9 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+    depends_on:
+      mongodb:
+        condition: service_healthy
 
   logging-service:
     build: ./logging_service
@@ -208,6 +215,8 @@ services:
         condition: service_healthy
       response-service:
         condition: service_healthy
+      nginx:
+        condition: service_healthy      
     
   
   shieldwatch-client:
@@ -237,6 +246,11 @@ services:
       - threat-detection-service
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    healthcheck:
+      test: curl --fail http://localhost:80 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
 networks:
   shieldwatch-network:

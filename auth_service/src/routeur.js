@@ -55,10 +55,6 @@ router.post('/signup', [
   const { username, password, role } = req.body;
 
   try {
-    // Vérifier si l'utilisateur qui fait la requête est admin
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Accès refusé. Seuls les administrateurs peuvent créer des utilisateurs avec des rôles spécifiques.' });
-    }
 
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await User.findOne({ username });

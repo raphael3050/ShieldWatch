@@ -44,3 +44,9 @@ app.listen(PORT, () => {
     setupService();
     console.log(`[+] Serveur démarré sur le port ${PORT}`);
 });
+
+
+
+
+
+export default app;
