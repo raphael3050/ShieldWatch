@@ -25,7 +25,13 @@ export async function middleware(req: NextRequest) {
 
     // Si l'utilisateur n'est pas admin, redirige vers la page de login
     if (response.data.user.role !== "admin") {
-      return NextResponse.redirect(new URL("/login", req.url));
+      const redirectResponse = NextResponse.redirect(
+        new URL("/login", req.url),
+      );
+
+      redirectResponse.headers.set("x-middleware-cache", "no-cache");
+
+      return redirectResponse;
     }
   } catch (error) {
     console.error(error);

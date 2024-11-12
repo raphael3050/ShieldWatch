@@ -18,22 +18,17 @@ const Login = () => {
     setError(null);
 
     try {
-      // Envoi de la requête pour l'authentification
       const response = await axios.post(
         "http://localhost:3005/auth/login",
         { username, password },
-        { withCredentials: true }, // Permet l'envoi du cookie HttpOnly
+        { withCredentials: true },
       );
 
-      console.log(response.data.message); // Affiche le message de succès
-
-      // Redirige vers la page d'accueil
-      await router.push("/admin");
-
-      // Rafraîchissement automatique de la page
-      window.location.replace("/admin");
+      console.log(response.status);
+      router.refresh(); // Forcer la mise à jour du cache côté client
+      router.push("/admin");
     } catch (err) {
-      setError("Échec de connexion : vérifiez vos identifiants.");
+      setError("Échec de connexion au service d'authentification");
       console.error(err);
     }
   };
