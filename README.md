@@ -20,15 +20,13 @@ Ou service name est le nom du service (celui présent dans le ficheir docker-com
 
 #### Sercice d'authentification
 
-Pour le service d'authentification, vous devez ajouter les variables suivantes:
+Pour le service d'authentification, vous devez ajouter la variable suivante:
 
 ````
 JWT_SECRET=your_secret_key
-ADMIN_LOGIN=your_admin_login
-ADMIN_PASSWORD=your_admin_password
 ````
 
-La première variable est la clé secrète utilisée pour générer les tokens JWT. La deuxième et la troisième variables sont les identifiants de l'administrateur de l'application (ce stockage d'identifiants est simplifié en utilisant le fichier .env). Pour générer une clé secrète, vous pouvez utiliser la commande suivante:
+C'est la clé secrète utilisée pour générer les tokens JWT. Pour générer une clé secrète, vous pouvez utiliser la commande suivante:
 
 ````
 openssl rand -base64 32
