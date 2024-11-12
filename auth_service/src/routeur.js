@@ -29,6 +29,8 @@ router.post('/login', [
         httpOnly: true,
         secure: false, // doit être true en production (HTTPS)
         sameSite: 'none',
+        path: '/',
+        sameSite: 'None',
         maxAge: 3600000,
       });
       return res.status(200).json({ message: 'Authentifié avec succès', token });

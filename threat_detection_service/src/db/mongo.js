@@ -33,4 +33,7 @@ export const connect = async (uri) => {
     }
 }
 
-export default {isMongoConnected};
+export const getMongoStatus = () => {
+    return isMongoConnected;
+}
+

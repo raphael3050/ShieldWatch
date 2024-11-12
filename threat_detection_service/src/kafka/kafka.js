@@ -18,7 +18,7 @@ class KafkaService {
     });
 
     this.producer = this.kafka.producer();
-    this.consumer = null;  // il sera créé dynamiquement
+    this.consumer = null; // il sera créé dynamiquement
     this.#isProducerConnected = false;
     this.#isConsumerConnected = false;
   }
@@ -38,9 +38,12 @@ class KafkaService {
   // Connecte le consommateur à Kafka avec un groupId unique pour chaque instance
   async connectConsumer(topic) {
     try {
-      const groupId = `threat-detection-group-${uuidv4()}`;  // Générer un groupId unique pour chaque instance
-      this.consumer = this.kafka.consumer({ groupId });  // Assigner le groupId dynamique
+      const groupId = `threat-detection-group-${uuidv4()}`; // Générer un groupId unique pour chaque instance
+      
+      // Assurer l'existence du topic avant de s'abonner
+      //await this.ensureTopicExists(topic);
 
+      this.consumer = this.kafka.consumer({ groupId });
       await this.consumer.connect();
       await this.consumer.subscribe({ topic, fromBeginning: true });
       console.log(`[+] Kafka consumer connected with groupId: ${groupId} and subscribed to topic: ${topic}`);

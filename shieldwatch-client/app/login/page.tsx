@@ -25,8 +25,7 @@ const Login = () => {
       );
 
       console.log(response.status);
-      router.refresh(); // Forcer la mise à jour du cache côté client
-      router.push("/admin");
+      window.location.replace("/admin");
     } catch (err) {
       setError("Échec de connexion au service d'authentification");
       console.error(err);

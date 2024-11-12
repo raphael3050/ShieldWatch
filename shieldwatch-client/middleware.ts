@@ -32,6 +32,10 @@ export async function middleware(req: NextRequest) {
       redirectResponse.headers.set("x-middleware-cache", "no-cache");
 
       return redirectResponse;
+    } else {
+      console.log("User is admin !");
+
+      return NextResponse.next();
     }
   } catch (error) {
     console.error(error);

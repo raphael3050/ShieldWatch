@@ -17,21 +17,36 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_CREATE_TOPICS: "events:1:1,responses:1:1"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      #KAFKA_CREATE_TOPICS_ENABLE: "true"
     networks:
       - shieldwatch-network
     depends_on:
       - zookeeper
     healthcheck:
-      test: kafka-topics --bootstrap-server kafka:9092 --list
+      #test: kafka-topics --bootstrap-server kafka:9092 --list
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server kafka:9092 --list || exit 1"]
       interval: 10s
       timeout: 10s
       retries: 5
     
-    
+  kafka-init:
+    image: confluentinc/cp-kafka:7.4.4
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - shieldwatch-network
+    entrypoint: >
+      sh -c "
+      kafka-topics --bootstrap-server kafka:9092 --create --topic responses --partitions 3 --replication-factor 1 --if-not-exists &&
+      kafka-topics --bootstrap-server kafka:9092 --create --topic events --partitions 3 --replication-factor 1 --if-not-exists
+      "
+    restart: "no"
+  
   mongodb:
     image: mongo:6.0
     container_name: mongodb
@@ -52,9 +67,6 @@ services:
 
   threat-detection-service:
     build: ./threat_detection_service
-    volumes:
-      - ./threat_detection_service:/usr/src/app
-      - ignore:/usr/src/app/threat_detection_service/node_modules
     ports:
       - "3000" 
     networks:
@@ -69,8 +81,8 @@ services:
       timeout: 10s
       retries: 5
     depends_on:
-      kafka:
-        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
       mongodb:
         condition: service_healthy
       incident-management-service:
@@ -82,9 +94,6 @@ services:
 
   incident-management-service:
     build: ./incident_management_service
-    volumes:
-      - ./incident_management_service:/usr/src/app
-      - ignore:/usr/src/app/incident_management_service/node_modules
     ports:
       - "3001:3001"
     networks:
@@ -105,9 +114,6 @@ services:
 
   auth-service:
     build: ./auth_service
-    volumes:
-      - ./auth_service:/usr/src/app
-      - ignore:/usr/src/app/auth_service/node_modules
     ports:
       - "3002:3002"
     networks:
@@ -127,9 +133,6 @@ services:
 
   logging-service:
     build: ./logging_service
-    volumes:
-      - ./logging_service:/usr/src/app
-      - ignore:/usr/src/app/logging_service/node_modules
     ports:
       - "3003:3003"
     networks:
@@ -150,9 +153,6 @@ services:
 
   notify-service:
     build: ./notify_service
-    volumes:
-      - ./notify_service:/usr/src/app
-      - ignore:/usr/src/app/notify_service/node_modules
     ports:
       - "3004:3004"
     networks:
@@ -169,9 +169,6 @@ services:
 
   response-service:
     build: ./response_service
-    volumes:
-      - ./response_service:/usr/src/app
-      - ignore:/usr/src/app/response_service/node_modules
     ports:
       - "3006:3006"
     networks:
@@ -190,9 +187,6 @@ services:
 
   gateway-service:
     build: ./gateway_service
-    volumes:
-      - ./gateway_service:/usr/src/app
-      - ignore:/usr/src/app/gateway_service/node_modules
     ports:
       - "3005:3005"
     networks:
@@ -258,4 +252,4 @@ networks:
 
 volumes:
   mongodb_data:
-  ignore:
+
