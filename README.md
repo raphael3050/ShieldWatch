@@ -55,8 +55,10 @@ La variable `SLACK_WEBHOOK_URL` est l'URL du webhook Slack que vous avez créé 
 Une fois les variables d'environnement ajoutées, vous pouvez déployer l'application en utilisant la commande suivante:
 
 ````
-sudo docker-compose up --build
+docker-compose up --build
 ````
+
+(selon votre système d'exloitation et vos droits d'accès, vous pourriez avoir besoin d'ajouter `sudo` avant la commande)
 
 Cette commande va construire les images Docker nécessaires et démarrer les conteneurs. Attention, il faut attendre quelques instants pour que les conteneurs soient prêts.
 Vous verrez cette ligne dans la console quand l'application sera prête:
